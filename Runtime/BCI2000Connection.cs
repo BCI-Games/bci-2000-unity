@@ -379,6 +379,7 @@ namespace BCI2000
 
 			DiscardResponse(); //Throw out startup messages
 			Execute("change directory $BCI2000LAUNCHDIR");
+			OnOperatorConnected();
 		}
 
 
@@ -386,5 +387,7 @@ namespace BCI2000
 			if (PrintDebugLogs)
 				Debug.Log(string.Join(',', ar));
 		}
+
+		protected virtual void OnOperatorConnected() {}
     }
 }

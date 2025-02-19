@@ -73,6 +73,7 @@ namespace BCI2000
 
 			WaitForSystemState(new[] {SystemState.Connected, SystemState.Initialization});
 			_remoteState = RemoteState.ModulesConnected;
+			OnModulesConnected();
 		}
 		
 		/// <summary>
@@ -153,6 +154,7 @@ namespace BCI2000
 			Execute("set config");
 			WaitForSystemState(SystemState.Resting);
 			_remoteState = RemoteState.Configured;
+			OnConfigured();
 		}
 
 		/// <summary>
@@ -160,18 +162,18 @@ namespace BCI2000
 		/// </summary>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is not in a state in which it can be immediately started or set config.</exception>
 		public void Start(){
-			SystemState current_state = GetSystemState();
+			SystemState currentState = GetSystemState();
 			ThrowCommandExceptionIf(
 				"Could not start BCI2000 run as it is already running.",
-				current_state == SystemState.Running
+				currentState == SystemState.Running
 			);
-			if (current_state is SystemState.Connected or SystemState.Initialization)
+			if (currentState is SystemState.Connected or SystemState.Initialization)
 				SetConfig();
 			else {
 				ThrowCommandExceptionIf(
 					"Could not start BCI2000 as it is not in a valid state."
-					+ $" BCI2000's state is currently {current_state}",
-					current_state is not (SystemState.Resting or SystemState.Suspended or SystemState.ParamsModified)
+					+ $" BCI2000's state is currently {currentState}",
+					currentState is not (SystemState.Resting or SystemState.Suspended or SystemState.ParamsModified)
 				);
 			}
 			
@@ -183,11 +185,11 @@ namespace BCI2000
 		/// </summary>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is not currently recording</exception>
 		public void Stop() {
-			SystemState current_state = GetSystemState();
+			SystemState currentState = GetSystemState();
 			ThrowCommandExceptionIf(
 				"Could not stop BCI2000 run because it is not running,"
-				+ $" BCI2000 currently in system state {current_state}",
-				current_state != SystemState.Running
+				+ $" BCI2000 currently in system state {currentState}",
+				currentState != SystemState.Running
 			);
 
 			Execute("stop system");
@@ -358,6 +360,10 @@ namespace BCI2000
 
 			Execute($"visualize watch {value}");
 		}
+
+		
+		protected virtual void OnModulesConnected() {}
+		protected virtual void OnConfigured() {}
 
 
 		private void ThrowExceptionUnlessIdle()
