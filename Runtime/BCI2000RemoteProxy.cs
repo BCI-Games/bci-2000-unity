@@ -57,13 +57,17 @@ namespace BCI2000
 		}
 		private RemoteState _remoteState = RemoteState.Disconnected;
 
-		/// <summary>
-		/// Starts up the specified BCI2000 modules. 
-		/// </summary>
-		/// <param name="modules">The modules to start.
-		/// A dictionary whose keys are the names of the modules to start ("SignalGenerator", "DummyApplication", etc.), and whose values are a list of arguments to the modules ("LogKeyboard=1", "LogEyetrackerTobiiPro=1".
-		/// The "--" in front of each argument is optional. Pass a null instead of a parameter list for no parameters.</param>
-		public void StartupModules(IDictionary<string, IEnumerable<string>?> modules) {
+
+        protected override void OnOperatorConnected()
+        => _remoteState = RemoteState.Idle;
+
+        /// <summary>
+        /// Starts up the specified BCI2000 modules. 
+        /// </summary>
+        /// <param name="modules">The modules to start.
+        /// A dictionary whose keys are the names of the modules to start ("SignalGenerator", "DummyApplication", etc.), and whose values are a list of arguments to the modules ("LogKeyboard=1", "LogEyetrackerTobiiPro=1".
+        /// The "--" in front of each argument is optional. Pass a null instead of a parameter list for no parameters.</param>
+        public void StartupModules(IDictionary<string, IEnumerable<string>?> modules) {
 			Execute("startup system");
 
 			foreach((string name, var arguments) in modules) {
@@ -161,7 +165,7 @@ namespace BCI2000
 		/// Starts a BCI2000 run, setting config if necessary
 		/// </summary>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is not in a state in which it can be immediately started or set config.</exception>
-		public void Start(){
+		public void StartRun(){
 			SystemState currentState = GetSystemState();
 			ThrowCommandExceptionIf(
 				"Could not start BCI2000 run as it is already running.",
@@ -184,7 +188,7 @@ namespace BCI2000
 		/// Stops a BCI2000 run.
 		/// </summary>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is not currently recording</exception>
-		public void Stop() {
+		public void StopRun() {
 			SystemState currentState = GetSystemState();
 			ThrowCommandExceptionIf(
 				"Could not stop BCI2000 run because it is not running,"

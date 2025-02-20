@@ -9,11 +9,15 @@ namespace BCI2000
 {
     public class ConfigurableBCI2000RemoteProxy: BCI2000RemoteProxy
     {
+        [Space(10)]
+        [Header("Behaviour Flags")]
         [SerializeField] private bool _autoConnect = true;
         [SerializeField] private bool _startWhenConnected = true;
-        [SerializeField] private bool _stopWithScene = true;
+        [SerializeField] private bool _stopWhenDestroyed = true;
 
         [Header("Operator")]
+        [SerializeField] private bool _autoStartLocalOperator = false;
+        public string OperatorPath;
         public string OperatorAddress = "127.0.0.1";
         public int OperatorPort = 3999;
 
@@ -36,21 +40,40 @@ namespace BCI2000
         [SerializeField] private EventDefinition[] _events;
 
 
-        void Awake()
-        {
-            if (_autoConnect)
+        void Awake() {
+            if (_autoStartLocalOperator) {
+                if (_autoConnect)
+                    StartAndConnectToLocalOperator(
+                        OperatorPath, OperatorPort, OperatorAddress
+                    );
+                else
+                    StartOperator(OperatorPath, port: OperatorPort);
+            } else if (_autoConnect)
                 ConnectOnceAvailable(OperatorPort, OperatorAddress);
         }
 
-        void OnDestroy()
-        {
-            if (_stopWithScene)
-                Stop();
+        void OnDestroy() {
+            if (_stopWhenDestroyed && Connected())
+                StopRun();
         }
 
 
-        protected override void OnOperatorConnected()
-        {
+        public void StartAndConnectToLocalOperator
+        (
+            string operatorPath, int port = 3999,
+            string address = "127.0.0.1"
+        ) {
+            if (!File.Exists(operatorPath)) {
+                Debug.LogWarning("Operator path invalid, aborting...");
+                return;
+            }
+            StartOperator(operatorPath, address, port);
+            ConnectOnceAvailable(port);
+        }
+
+
+        protected override void OnOperatorConnected() {
+            base.OnOperatorConnected();
             SystemState currentState = GetSystemState();
             if (currentState == SystemState.Idle) {
                 AddParameters(_parameters);
@@ -70,7 +93,7 @@ namespace BCI2000
             }
 
             if (_startWhenConnected)
-                Start();
+                StartRun();
         }
 
         protected override void OnModulesConnected()
