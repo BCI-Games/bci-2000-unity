@@ -385,7 +385,12 @@ namespace BCI2000
 
 			DiscardResponse(); //Throw out startup messages
 			Execute("change directory $BCI2000LAUNCHDIR");
-			OnOperatorConnected();
+			
+			try {
+				OnOperatorConnected();
+			} catch (Exception e) {
+				Debug.LogException(e);
+			}
 		}
 
 

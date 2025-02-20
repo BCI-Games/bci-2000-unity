@@ -77,7 +77,12 @@ namespace BCI2000
 
 			WaitForSystemState(new[] {SystemState.Connected, SystemState.Initialization});
 			_remoteState = RemoteState.ModulesConnected;
-			OnModulesConnected();
+
+			try {
+				OnModulesConnected();
+			} catch (Exception e) {
+				UnityEngine.Debug.LogException(e);
+			}
 		}
 		
 		/// <summary>
