@@ -294,7 +294,7 @@ namespace BCI2000
 				}
 
 				long elapsedTime = GetSystemTime() - startTime;
-				if (elapsedTime > Timeout)
+				if (Timeout > 0 && elapsedTime > Timeout)
 					throw new TimeoutException();
 
 				if (!_clientStream!.DataAvailable)
