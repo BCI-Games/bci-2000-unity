@@ -76,16 +76,6 @@ namespace BCI2000
         public int BitWidth = 16;
         public uint InitialValue = 0;
 
-        public void Deconstruct
-        (
-            out string name, out int bitWidth, out uint initialValue
-        )
-        {
-            name = Name;
-            bitWidth= BitWidth;
-            initialValue = InitialValue;
-        }
-
         public static void Validate(string name, int bitWidth, string exceptionLabel = "value")
         {
 			if (name.Any(char.IsWhiteSpace)) {
@@ -101,6 +91,9 @@ namespace BCI2000
                 );
             }
         }
+
+        public void DeconstructInto(Action<string, int, uint> action)
+        => action(Name, BitWidth, InitialValue);
     }
 
 
@@ -112,20 +105,6 @@ namespace BCI2000
         public string DefaultValue = "";
         public string MinimumValue = "";
         public string MaximumValue = "";
-
-        public void Deconstruct
-        (
-            out string section, out string name,
-            out string defaultValue,
-            out string minimumValue, out string maximumValue
-        )
-        {
-            section = Section;
-            name = Name;
-            defaultValue = Coalesce(DefaultValue);
-            minimumValue = Coalesce(MinimumValue);
-            maximumValue = Coalesce(MaximumValue);
-        }
 
         private string Coalesce(string s) => string.IsNullOrEmpty(s)? "%": s;
 
@@ -146,5 +125,11 @@ namespace BCI2000
 				);
 			}
         }
+
+        public void DeconstructInto(Action<string, string, string, string, string> action)
+        => action(
+            Section, Name, Coalesce(DefaultValue),
+           Coalesce(MinimumValue), Coalesce(MaximumValue)
+        );
     }
 }
