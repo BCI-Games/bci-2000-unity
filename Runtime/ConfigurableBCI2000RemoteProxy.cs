@@ -35,6 +35,7 @@ namespace BCI2000
         void OnDestroy() {
             if (_stopWhenDestroyed && Connected())
                 StopRun();
+            Disconnect();
         }
 
 

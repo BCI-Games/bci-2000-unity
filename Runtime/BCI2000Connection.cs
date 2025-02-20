@@ -183,8 +183,10 @@ namespace BCI2000
 		/// <summary>
 		/// Shuts down the connected BCI2000 instance
 		/// </summary>
-		public void Quit()
-		=> Execute("Quit", expectEmptyResponse: false);
+		public void Quit() {
+			ThrowExceptionUnlessConnected();
+			SendCommand("Quit");
+		}
 
 		/// <summary>
 		/// Executes the given command and returns the result as type <typeparamref name="T"/>.
@@ -385,7 +387,7 @@ namespace BCI2000
 
 			DiscardResponse(); //Throw out startup messages
 			Execute("change directory $BCI2000LAUNCHDIR");
-			
+
 			try {
 				OnOperatorConnected();
 			} catch (Exception e) {
