@@ -178,7 +178,7 @@ namespace BCI2000
 		/// </summary>
 		/// <returns>Whether or not this object is currently connected to BCI2000</returns>
 		public bool Connected()
-		=> _client?.Connected ?? false;
+		=> _client?.IsConnected() ?? false;
 
 		/// <summary>
 		/// Shuts down the connected BCI2000 instance
@@ -287,6 +287,12 @@ namespace BCI2000
 			long startTime = GetSystemTime();
 			while (true)
 			{
+				if (!Connected()) {
+					throw new BCI2000ConnectionException(
+						"Lost connection while receiving response"
+					);
+				}
+
 				long elapsedTime = GetSystemTime() - startTime;
 				if (elapsedTime > Timeout)
 					throw new TimeoutException();
