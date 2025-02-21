@@ -176,13 +176,22 @@ namespace BCI2000
 				"Could not start BCI2000 run as it is already running.",
 				currentState == SystemState.Running
 			);
-			if (currentState is SystemState.Connected or SystemState.Initialization)
+			if (currentState is
+				SystemState.Startup or
+				SystemState.Connected or
+				SystemState.Initialization
+			) {
 				SetConfig();
+			}
 			else {
 				ThrowCommandExceptionIf(
 					"Could not start BCI2000 as it is not in a valid state."
 					+ $" BCI2000's state is currently {currentState}",
-					currentState is not (SystemState.Resting or SystemState.Suspended or SystemState.ParamsModified)
+					currentState is not (
+						SystemState.Resting or
+						SystemState.Suspended or
+						SystemState.ParamsModified
+					)
 				);
 			}
 			
