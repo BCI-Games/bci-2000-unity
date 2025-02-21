@@ -84,6 +84,8 @@ namespace BCI2000
 			}
 		}
 
+		public event Action? OnOperatorConnected;
+
 		private TcpClient? _client;
 		private NetworkStream? _clientStream;
 
@@ -389,7 +391,7 @@ namespace BCI2000
 			Execute("change directory $BCI2000LAUNCHDIR");
 
 			try {
-				OnOperatorConnected();
+				NotifyOperatorConnected();
 			} catch (Exception e) {
 				Debug.LogException(e);
 			}
@@ -401,6 +403,8 @@ namespace BCI2000
 				Debug.Log(string.Join(',', ar));
 		}
 
-		protected virtual void OnOperatorConnected() {}
+		protected virtual void NotifyOperatorConnected() {
+			OnOperatorConnected?.Invoke();
+		}
     }
 }

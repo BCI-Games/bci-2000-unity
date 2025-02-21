@@ -53,8 +53,8 @@ namespace BCI2000
         }
 
 
-        protected override void OnOperatorConnected() {
-            base.OnOperatorConnected();
+        protected override void NotifyOperatorConnected() {
+            base.NotifyOperatorConnected();
             SystemState currentState = GetSystemState();
 
             if (currentState == SystemState.Idle) {
@@ -73,7 +73,7 @@ namespace BCI2000
                 StartRun();
         }
 
-        protected override void OnModulesConnected()
+        protected override void NotifyModulesConnected()
         => _startupConfiguration.ForEachParameterFile(LoadParameterFile);
 
 

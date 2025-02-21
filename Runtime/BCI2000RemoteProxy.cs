@@ -57,9 +57,9 @@ namespace BCI2000
 		}
 		private RemoteState _remoteState = RemoteState.Disconnected;
 
+		public event Action? OnModulesConnected;
+		public event Action? OnConfigured;
 
-        protected override void OnOperatorConnected()
-        => _remoteState = RemoteState.Idle;
 
         /// <summary>
         /// Starts up the specified BCI2000 modules. 
@@ -79,7 +79,7 @@ namespace BCI2000
 			_remoteState = RemoteState.ModulesConnected;
 
 			try {
-				OnModulesConnected();
+				NotifyModulesConnected();
 			} catch (Exception e) {
 				UnityEngine.Debug.LogException(e);
 			}
@@ -163,7 +163,7 @@ namespace BCI2000
 			Execute("set config");
 			WaitForSystemState(SystemState.Resting);
 			_remoteState = RemoteState.Configured;
-			OnConfigured();
+			NotifyConfigured();
 		}
 
 		/// <summary>
@@ -379,9 +379,18 @@ namespace BCI2000
 			Execute($"visualize watch {value}");
 		}
 
+
+        protected override void NotifyOperatorConnected() {
+        	_remoteState = RemoteState.Idle;
+			base.NotifyOperatorConnected();
+		}
 		
-		protected virtual void OnModulesConnected() {}
-		protected virtual void OnConfigured() {}
+		protected virtual void NotifyModulesConnected() {
+			OnModulesConnected?.Invoke();
+		}
+		protected virtual void NotifyConfigured() {
+			OnConfigured?.Invoke();
+		}
 
 
 		private void ThrowExceptionUnlessIdle()
