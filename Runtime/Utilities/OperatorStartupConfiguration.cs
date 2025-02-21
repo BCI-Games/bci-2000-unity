@@ -10,9 +10,9 @@ namespace BCI2000
     {
         public bool RequiresSetup =>
             StartModulesWithConnection
-            || Parameters is null or {Length: 0}
-            || States is null or {Length: 0}
-            || Events is null or {Length: 0};
+            || !Parameters.IsNullOrEmpty()
+            || !States.IsNullOrEmpty()
+            || !Events.IsNullOrEmpty();
 
         [Header("Modules")]
         public bool StartModulesWithConnection = true;
@@ -60,5 +60,11 @@ namespace BCI2000
 
             return moduleDictionary;
         }
+    }
+
+    public static class ArrayExtensions
+    {
+        public static bool IsNullOrEmpty(this Array ar)
+        => ar is null or {Length: 0};
     }
 }
