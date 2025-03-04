@@ -85,6 +85,12 @@ namespace BCI2000
 				UnityEngine.Debug.LogException(e);
 			}
 		}
+
+		/// <summary>
+		/// Reset the operator, closing modules and wiping configuration.
+		/// </summary>
+		public void ResetSystem()
+		=> Execute("reset system");
 		
 		/// <summary>
 		/// Outputs a message to the system log.

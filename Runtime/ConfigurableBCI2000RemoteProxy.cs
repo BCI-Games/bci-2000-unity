@@ -57,6 +57,10 @@ namespace BCI2000
             base.OnOperatorConnected();
             SystemState currentState = GetSystemState();
 
+            if (_startupConfiguration.ResetSystemWhenConnected) {
+                ResetSystem();
+                currentState = GetSystemState();
+            }
             if (currentState == SystemState.Idle) {
                 _startupConfiguration.ForEachParameter(AddParameter);
                 _startupConfiguration.ForEachState(AddState);

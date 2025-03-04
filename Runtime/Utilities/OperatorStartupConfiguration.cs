@@ -14,6 +14,8 @@ namespace BCI2000
             || !States.IsNullOrEmpty()
             || !Events.IsNullOrEmpty();
 
+        public bool ResetSystemWhenConnected = false;
+
         [Header("Modules")]
         public bool StartModulesWithConnection = true;
         public ModuleConfiguration SignalSourceModule = new("SignalGenerator");
