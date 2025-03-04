@@ -230,12 +230,13 @@ namespace BCI2000
 		/// <param name="maximumValue">The maximum value of the parameter. This argument is optional.</param>
 		/// <param name="minimumValue">The minimum value of the parameter. This argument is optional.</param>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is in an invalid state for adding parameters</exception>
+		/// <exception cref="BCI2000ArgumentFormatException">Thrown if argument format is invalid</exception>
 		public void AddParameter(
 			string section, string name, string defaultValue = "%",
 			string minimumValue = "%", string maximumValue = "%"
 		) {
 			ThrowExceptionUnlessIdle();
-			ParameterDefinition.Validate(section, name, defaultValue, minimumValue, maximumValue);
+			ParameterDefinition.ThrowExceptionIfFormatInvalid(section, name, defaultValue, minimumValue, maximumValue);
 
 			Execute($"add parameter {section} variant {name}= {defaultValue} {minimumValue} {maximumValue}");
 		}
@@ -292,9 +293,10 @@ namespace BCI2000
 		/// <param name="bitWidth">The bit width of the new state. Must be between 1 and 32.</param>
 		/// <param name="initialValue">The initial value of the state.</param>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is in invalid state or invalid parameters passed</param>
+		/// <exception cref="BCI2000ArgumentFormatException">Thrown if argument format is invalid</exception>
 		public void AddState(string name, int bitWidth, uint initialValue = 0) {
 			ThrowExceptionUnlessIdle();
-			StateDefinition.Validate(name, bitWidth);
+			StateDefinition.ThrowExceptionIfFormatInvalid(name, bitWidth);
 
 			Execute($"add state {name} {bitWidth} {initialValue}"); 
 		}
@@ -322,9 +324,10 @@ namespace BCI2000
 		/// <param name="bitWidth">The bit width of the new state. Must be between 1 and 32.</param>
 		/// <param name="initialValue">The initial value of the state.</param>
 		/// <exception cref="BCI2000CommandException">Thrown if BCI2000 is in invalid state or invalid parameters passed</param>
+		/// <exception cref="BCI2000ArgumentFormatException">Thrown if argument format is invalid</exception>
 		public void AddEvent(string name, int bitWidth, uint initialValue = 0) {
 			ThrowExceptionUnlessIdle();
-			EventDefinition.Validate(name, bitWidth);
+			EventDefinition.ThrowExceptionIfFormatInvalid(name, bitWidth);
 
 			Execute($"add event {name} {bitWidth} {initialValue}");
 		}

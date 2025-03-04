@@ -60,14 +60,16 @@ namespace BCI2000
     [Serializable]
     public class EventDefinition: NamedValueDefinition
     {
-        public void Validate() => Validate(Name, BitWidth);
-        public static void Validate(string name, int bitWidth) => Validate(name, bitWidth, "event");
+        public void ThrowExceptionIfFormatInvalid() => ThrowExceptionIfFormatInvalid(Name, BitWidth);
+        public static void ThrowExceptionIfFormatInvalid(string name, int bitWidth)
+        => ThrowExceptionIfFormatInvalid(name, bitWidth, "event");
     }
     [Serializable]
     public class StateDefinition: NamedValueDefinition
     {
-        public void Validate() => Validate(Name, BitWidth);
-        public static void Validate(string name, int bitWidth) => Validate(name, bitWidth, "state");
+        public void ThrowExceptionIfFormatInvalid() => ThrowExceptionIfFormatInvalid(Name, BitWidth);
+        public static void ThrowExceptionIfFormatInvalid(string name, int bitWidth)
+        => ThrowExceptionIfFormatInvalid(name, bitWidth, "state");
     }
     
     public abstract class NamedValueDefinition
@@ -76,16 +78,19 @@ namespace BCI2000
         public int BitWidth = 16;
         public uint InitialValue = 0;
 
-        public static void Validate(string name, int bitWidth, string exceptionLabel = "value")
+        public static void ThrowExceptionIfFormatInvalid
+        (
+            string name, int bitWidth, string exceptionLabel = "value"
+        )
         {
 			if (name.Any(char.IsWhiteSpace)) {
-				throw new BCI2000CommandException(
+				throw new BCI2000ArgumentFormatException(
                     $"Error adding {exceptionLabel} {name},"
                     + $" {exceptionLabel} names must not contain whitespace"
                 );
             }
 			if (bitWidth > 32 || bitWidth < 1) {
-				throw new BCI2000CommandException(
+				throw new BCI2000ArgumentFormatException(
                     $"Bit width of {bitWidth} for {exceptionLabel} {name} is invalid."
                     + " Bit width must be between 1 and 32."
                 );
@@ -108,8 +113,9 @@ namespace BCI2000
 
         private string Coalesce(string s) => string.IsNullOrEmpty(s)? "%": s;
 
-        public void Validate() => Validate(Section, Name, DefaultValue, MinimumValue, MaximumValue);
-        public static void Validate(
+        public void ThrowExceptionIfFormatInvalid()
+        => ThrowExceptionIfFormatInvalid(Section, Name, DefaultValue, MinimumValue, MaximumValue);
+        public static void ThrowExceptionIfFormatInvalid(
             string section, string name, string defaultValue = "",
             string minimumValue = "", string maximumValue = ""
         )
@@ -119,7 +125,7 @@ namespace BCI2000
 
 			if (whitespaceArguments.Count() != 0) {
 			    whitespaceArguments = whitespaceArguments.Select(str => $"\"{str}\""); 
-				throw new BCI2000CommandException(
+				throw new BCI2000ArgumentFormatException(
 					"Parameter definition arguments must not contain whitespace."
 					+ $" Argument(s) {string.Join(',', whitespaceArguments)} contain whitespace."
 				);

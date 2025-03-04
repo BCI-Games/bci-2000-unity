@@ -14,4 +14,9 @@ namespace BCI2000
     {
         internal BCI2000ConnectionException(string message) : base(message) { }
     }
+
+    internal class BCI2000ArgumentFormatException : Exception
+    {
+        internal BCI2000ArgumentFormatException(string message) : base(message) { }
+    }
 }
