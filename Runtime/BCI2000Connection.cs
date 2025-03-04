@@ -85,17 +85,22 @@ namespace BCI2000
 		}
 
 		public event Action? OperatorConnected;
+		public event Action? Disconnecting;
 
 		private TcpClient? _client;
 		private NetworkStream? _clientStream;
 
 
-		~BCI2000Connection() => Disconnect();
-
 		/// <summary>
 		///Disconnects from the operator. Terminates the operator if <see cref="TerminateOperatorOnDisconnect"/> is set.
 		/// </summary>
 		public void Disconnect() {
+			try {
+				Disconnecting?.Invoke();
+			} catch (Exception e) {
+				Debug.LogException(e);
+			}
+
 			if (TerminateOperatorOnDisconnect && Connected())
 				Quit();
 			

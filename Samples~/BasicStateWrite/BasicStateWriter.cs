@@ -19,6 +19,8 @@ public class BasicStateWriter : MonoBehaviour
         if (_visualizeStateWhenConnected) {
             _bci2000Proxy.OperatorConnected += ()
                 => _bci2000Proxy.Visualize(stateName);
+            _bci2000Proxy.Disconnecting += ()
+                => _bci2000Proxy.Execute("clear watches");
         }
     }
 
