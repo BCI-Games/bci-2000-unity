@@ -28,13 +28,10 @@ public class BasicStateWriter : MonoBehaviour
         {
             if (_bci2000Proxy && _bci2000Proxy.Connected())
             {
-                uint newValue = (stateValue + 1) % 2;
+                stateValue = (stateValue + 1) % 2;
 
-                Debug.Log($"Setting test state to new value: {newValue}");
-                _bci2000Proxy.SetState(stateName, newValue);
-
-                stateValue = _bci2000Proxy.GetState(stateName);
-                Debug.Log($"Fetched test state value: {stateValue}");
+                Debug.Log($"Setting test state to new value: {stateValue}");
+                _bci2000Proxy.SetState(stateName, stateValue);
             }
         }
     }
